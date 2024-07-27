@@ -1,5 +1,9 @@
 # FDF
 
+
+https://github.com/glfw/glfw
+https://github.com/codam-coding-college/MLX42
+
 ## Descripción
 Este proyecto se trata de la creación de un simple
 modelo de estructura alámbrica de un paisaje.

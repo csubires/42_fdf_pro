@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/25 20:10:37 by csubires         ###   ########.fr       */
+/*   Updated: 2024/07/27 15:37:38 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,21 @@ void my_scrollhook(double xdelta, double ydelta, void* param)
 
 
 
-void	zoom_and_altitude(int keycode, t_fdfs *fdfs)
+void	zoom_and_altitude(void *param)
 {
-	if (keycode == KEY_Q && fdfs->zoom > 0)
+	t_fdfs	*fdfs = (t_fdfs *)param;
+
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_Q) && fdfs->zoom > 0)
 		fdfs->zoom -= ZOOM_STEP;
-	if (keycode == KEY_E && fdfs->zoom < 100)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_E) && fdfs->zoom < 100)
 		fdfs->zoom += ZOOM_STEP;
-	if (keycode == KEY_G)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_G))
 		if (fdfs->flat < 50)
 			fdfs->flat += ALTITUDE_STEP;
-	if (keycode == KEY_V)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_V))
 		if (fdfs->flat > -50)
 			fdfs->flat -= ALTITUDE_STEP;
+	render_map(fdfs);
 }
 
 
@@ -130,7 +133,6 @@ int mouse_hook(int button, int x, int y, void *p)
 		fdfs->zoom -= ZOOM_STEP;
 	}
 
-	render_map(p);
 	return (0);
 }
 
@@ -165,50 +167,60 @@ void	rotation(void *param)
 		fdfs->rotate_z += ROT_STEP;
 	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_D))
 		fdfs->rotate_z -= ROT_STEP;
+	render_map(fdfs);
 }
 
-void	state(int keycode, t_fdfs *fdfs)
+void	key_event(void *param)
 {
-	if (keycode == KEY_J)
+	t_fdfs	*fdfs = (t_fdfs *)param;
+
+	if (!mlx_is_key_down(fdfs->mlx, MLX_KEY_ENTER))
+		{
+			fdfs->state.menu = 0;
+			//mlx_delete_image(fdfs->mlx, fdfs->menu);
+			set_bgcolor(fdfs->img, random_color());
+		}
+
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_J))
 	{
 		fdfs->state.map_color = 0;
 		fdfs->state.rnd_color = !fdfs->state.rnd_color;
 		set_palette(&fdfs->state.palette, 0);
 	}
-	if (keycode == KEY_M)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_M))
 	{
 		fdfs->state.rnd_color = 0;
 		fdfs->state.map_color = !fdfs->state.map_color;
 		set_palette(&fdfs->state.palette, 2);
 	}
 
-	if (keycode == KEY_0)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_0))
 	{
 		fdfs->state.disable_clean = !fdfs->state.disable_clean;
 	}
 
-	if (keycode == KEY_1)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_1))
 	{
 		fdfs->state.bg_color = !fdfs->state.bg_color;
-		change_bgcolor(fdfs, random_color());
+		set_bgcolor(fdfs->img, random_color());
 	}
 
-	if (keycode == KEY_2)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_2))
 	{
 		fdfs->state.extra_pixel = !fdfs->state.extra_pixel;
 	}
 
-	if (keycode == KEY_3)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_3))
 	{
 		fdfs->state.multi_color = !fdfs->state.multi_color;
 	}
 
-	if (keycode == KEY_4)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_4))
 	{
 		fdfs->state.dark_zero = !fdfs->state.dark_zero;
 	}
 
-	if (keycode == KEY_5)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_5))
 	{
 		if (!fdfs->state.mirror)
 			fdfs->state.mirror = 1;
@@ -216,46 +228,25 @@ void	state(int keycode, t_fdfs *fdfs)
 			fdfs->state.mirror = 0;
 	}
 
-	if (keycode == KEY_ENTER)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_ENTER))
 		fdfs->state.menu = !fdfs->state.menu;
-}
 
-
-void	ft_hook(void *param)
-{
-	t_fdfs	*fdfs;
-
-	fdfs = (t_fdfs *)param;
 	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_R))
 	{
 		fdfs->state.map_color = 0;
 		fdfs->state.rnd_color = 0;
 		reset_fdfs(fdfs);
-		//ft_bzero(fdfs->img->addr, WIN_W * WIN_H * (fdfs->img->bpp / 8));
 	}
-	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_UP))
-	{
-		fdfs->step_y -= STEP;
-	}
-}
 
-int	key_event(int keycode, t_fdfs *fdfs)
-{
-	if (keycode != KEY_ENTER)
-		fdfs->state.menu = 0;
-	if (keycode == KEY_ESC)
-		close_win(fdfs);
-	if (keycode == KEY_E || keycode == KEY_Q)
-		zoom_and_altitude(keycode, fdfs);
-	if (keycode == KEY_J || keycode == KEY_M || keycode == KEY_R
-		|| keycode == KEY_ENTER || keycode == KEY_0 || keycode == KEY_1 || keycode == KEY_2 || keycode == KEY_3 || keycode == KEY_4 || keycode == KEY_5)
-		state(keycode, fdfs);
-	if (keycode == KEY_V || keycode == KEY_G)
-		zoom_and_altitude(keycode, fdfs);
-	if (keycode == KEY_T)
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_T))
+	{
 		fdfs->state.zenith = !fdfs->state.zenith;
+	}
+
+	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_ESCAPE))
+		mlx_close_window(fdfs->mlx);
+
 	render_map(fdfs);
 	if (fdfs->state.menu)
 		show_menu(fdfs);
-	return (0);
 }

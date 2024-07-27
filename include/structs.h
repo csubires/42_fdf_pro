@@ -28,14 +28,14 @@ typedef struct s_map
 // SET COLORS FOR MAP
 typedef struct s_palette
 {
-	int	color_1;
-	int	color_2;
-	int	color_3;
-	int	color_4;
-	int	color_5;
-	int	color_6;
-	int	color_7;
-	int	color_8;
+	int32_t	color_1;
+	int32_t	color_2;
+	int32_t	color_3;
+	int32_t	color_4;
+	int32_t	color_5;
+	int32_t	color_6;
+	int32_t	color_7;
+	int32_t	color_8;
 }	t_palette;
 
 // OPTIONS OF PROGRAM
@@ -70,8 +70,8 @@ typedef struct s_fdfs
 	t_map	*map;
 	mlx_image_t	*img;
 	mlx_image_t	*menu;
-	int		step_x;
-	int		step_y;
+	int32_t		step_x;
+	int32_t		step_y;
 	float	rotate_x;
 	float	rotate_y;
 	float	rotate_z;

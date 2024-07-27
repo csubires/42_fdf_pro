@@ -6,7 +6,7 @@
 #    By: csubires <csubires@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/18 13:48:18 by csubires          #+#    #+#              #
-#    Updated: 2024/07/25 19:46:21 by csubires         ###   ########.fr        #
+#    Updated: 2024/07/27 11:50:25 by csubires         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,10 +52,10 @@ all: $(NAME)
 
 $(NAME):	$(O_FILES) $(LIBFT_FILE)
 	@$(PRINT) "$(GREEN)EXECUTABLE:$(ENDC)	$@"
-	@$(CC) $(O_FILES) -o $@ -pthread -lm -L. -l:$(LIBFT_FILE) -l:./mlx42/libmlx42.a -l:./mlx42/libglfw3.a
+	@$(CC) $(O_FILES) -o $@ -g -pthread -lm -L. -l:$(LIBFT_FILE) -l:./mlx42/libmlx42.a -l:./mlx42/libglfw3.a
 
 $(O_DIR)/%.o:	$(C_DIR)/%.c $(LIBFT_FILE) | $(O_DIR)
-	@$(CC) -c $< -o $@ -L -l:$(LIBFT_FILE) $(MLXFLAGS) -lm
+	@$(CC) -c $< -o $@ -g -L -l:$(LIBFT_FILE) $(MLXFLAGS) -lm
 
 $(LIBFT_FILE):
 	@make -C "libft" added

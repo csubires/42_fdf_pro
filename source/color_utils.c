@@ -6,16 +6,28 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 11:57:52 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/25 18:57:23 by csubires         ###   ########.fr       */
+/*   Updated: 2024/07/27 11:44:05 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
 
-int	random_color(void)
+int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
 {
-	return (((rand() % 250) << 16) | ((rand() % 250) << 8) | (rand() % 250));
+    return (r << 24 | g << 16 | b << 8 | a);
 }
+
+int32_t	random_color(void)
+{
+				return (ft_pixel(
+				rand() % 0xFF, // R
+				rand() % 0xFF, // G
+				rand() % 0xFF, // B
+				rand() % 0xFF  // A
+				));
+}
+
+
 
 static void	set_palete_default(t_palette *palette)
 {

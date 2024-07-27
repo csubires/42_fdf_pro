@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/23 09:15:30 by csubires         ###   ########.fr       */
+/*   Updated: 2024/07/27 15:20:25 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	lambda(char *c)
 {
-	*c = ft_tolower(*c);
+	*c = ft_toupper(*c);
 }
 
 static int	parse_color(t_map *map, char *s)
@@ -60,6 +60,8 @@ static void	map_to_mem(t_map *map, int fd)
 		free(line);
 	}
 }
+
+// get_dimensions(fd, map);
 
 static void	parse_file(t_map *map, char *file)
 {

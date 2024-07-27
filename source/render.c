@@ -6,30 +6,32 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/25 20:12:03 by csubires         ###   ########.fr       */
+/*   Updated: 2024/07/27 15:30:06 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
 
-int	render_menu(t_fdfs *fdfs, int width, int height)
+int	render_menu(mlx_image_t *menu)
 {
+
 	int		x;
 	int		y;
+	int32_t	width = menu->width;
+	int32_t	height = menu->height;
 
-	fdfs->menu = mlx_new_image(fdfs->mlx, width, height);
+
+	set_bgcolor(menu, MENU_BG);
 
 	x = -1;
-	while (x++ <= width)
+	while (x++ < width)
 	{
 		y = -1;
-		while (y++ <= height)
+		while (y++ < height)
 		{
 			if (x < 5 || x > (width - 6) || y < 5 || y > (height - 6) || \
-			y == 150 || y == 260 || y == 400 || y == 510)
-				mlx_put_pixel(fdfs->menu, x, y, MENU_BORDER);
-			else
-				mlx_put_pixel(fdfs->menu, x, y, MENU_BG);
+			y == 160 || y == 280 || y == 420 || y == 530)
+				mlx_put_pixel(menu, x, y, MENU_BR);
 		}
 	}
 	return (1);
@@ -40,26 +42,25 @@ void	show_menu(t_fdfs *fdfs)
 	int		y;
 	int		x;
 
-	x = (WIN_W - 400) / 2;
-	y = (WIN_H - 600) / 2;
+	x = (WIN_W - fdfs->menu->width) / 2;
+	y = (WIN_H - fdfs->menu->height) / 2;
 	if (mlx_image_to_window(fdfs->mlx, fdfs->menu, x, y) < 0)
         error_and_exit("initialise_mlx", "mlx_image_to_window");
-	/*mlx_string_put(fdfs->mlx, x + 40, y += 40, 0xFFFFFF, M_TEXT_00);
-	mlx_string_put(fdfs->mlx, x + 40, y += 30, 0xFFFFFF, M_TEXT_01);
-	mlx_string_put(fdfs->mlx, x + 40, y += 30, 0xFFFFFF, M_TEXT_02);
-	mlx_string_put(fdfs->mlx, x + 40, y += 30, 0xFFFFFF, M_TEXT_03);
-	mlx_string_put(fdfs->mlx, x + 40, y += 50, 0xF7DC6F, M_TEXT_04);
-	mlx_string_put(fdfs->mlx, x + 130, y += 30, 0xFFFFFF, M_TEXT_05);
-	mlx_string_put(fdfs->mlx, x + 40, y += 30, 0xFFFFFF, M_TEXT_06);
-	mlx_string_put(fdfs->mlx, x + 40, y += 50, 0xF7DC6F, M_TEXT_07);
-	mlx_string_put(fdfs->mlx, x + 120, y += 30, 0xFFFFFF, M_TEXT_08);
-	mlx_string_put(fdfs->mlx, x + 40, y += 30, 0xFFFFFF, M_TEXT_09);
-	mlx_string_put(fdfs->mlx, x + 220, y += 30, 0xFFFFFF, M_TEXT_10);
-	mlx_string_put(fdfs->mlx, x + 40, y += 50, 0xF7DC6F, M_TEXT_11);
-	mlx_string_put(fdfs->mlx, x + 70, y += 30, 0xFFFFFF, M_TEXT_12);
-	mlx_string_put(fdfs->mlx, x + 70, y += 30, 0xFFFFFF, M_TEXT_13);
-	mlx_string_put(fdfs->mlx, x + 40, y += 50, 0xFFFFFF, M_TEXT_14);
-	mlx_string_put(fdfs->mlx, x + 40, y += 30, 0xFFFFFF, M_TEXT_15);*/
+	mlx_put_string(fdfs->mlx, M_TEXT_00, x + 40, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_02, x + 40, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_03, x + 40, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_04, x + 40, y += 60);
+	mlx_put_string(fdfs->mlx, M_TEXT_05, x + 130, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_06, x + 40, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_07, x + 40, y += 50);
+	mlx_put_string(fdfs->mlx, M_TEXT_08, x + 120, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_09, x + 40, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_10, x + 220, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_11, x + 40, y += 60);
+	mlx_put_string(fdfs->mlx, M_TEXT_12, x + 70, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_13, x + 70, y += 40);
+	mlx_put_string(fdfs->mlx, M_TEXT_14, x + 40, y += 60);
+	mlx_put_string(fdfs->mlx, M_TEXT_15, x + 40, y += 40);
 }
 
 static void	init_bresenham(t_point *start, t_point *end,
@@ -89,6 +90,9 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 		int color = random_color();
 	while (cur.x != end.x || cur.y != end.y)
 	{
+
+ 		if (cur.x >= fdfs->img->width || cur.y >= fdfs->img->height)
+			break;
 
 		mlx_put_pixel(fdfs->img, cur.x, cur.y, get_color(start, end, cur, diff));
 
@@ -133,13 +137,15 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 	}
 }
 
-void	render_map(t_fdfs *fdfs)
+void	render_map(void *param)
 {
+	t_fdfs *fdfs = (t_fdfs *)param;
+
 	int	x;
 	int	y;
 
-	//if (!fdfs->state.disable_clean && !fdfs->state.bg_color)
-	//	memset(fdfs->img->pixels, BG_COLOR, fdfs->img->width * fdfs->img->height * sizeof(int32_t));
+	if (!fdfs->state.disable_clean && !fdfs->state.bg_color)
+		set_bgcolor(fdfs->img, 0x000000FF);
 
 	if (fdfs->zoom)
 	{
@@ -169,6 +175,9 @@ void	render_map(t_fdfs *fdfs)
 				x = -1;
 				while (++x < fdfs->map->width)
 				{
+					if (fdfs->map->z_gen[y][x] < 5)
+						continue ;
+
 					if (x < fdfs->map->width - 1)
 						bresenham(fdfs,
 							get_coordinate(fdfs, new_point(x, y, fdfs)),
@@ -180,9 +189,7 @@ void	render_map(t_fdfs *fdfs)
 				}
 			}
 		}
-
-
 	}
-	if (mlx_image_to_window(fdfs->mlx, fdfs->img, 0, 0) < 0)
-        error_and_exit("initialise_mlx", "mlx_image_to_window");
+
+
 }

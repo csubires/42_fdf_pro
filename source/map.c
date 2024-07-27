@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/23 09:15:30 by csubires         ###   ########.fr       */
+/*   Updated: 2024/07/27 11:46:47 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	free_map(t_map *map)
 {
-	int	x;
+	int32_t	x;
 
 	if (!map)
 		return ;
@@ -39,8 +39,8 @@ void	free_map(t_map *map)
 
 void	set_z_limits(t_map *map)
 {
-	int	x;
-	int	y;
+	int32_t	x;
+	int32_t	y;
 
 	y = -1;
 	while (++y < map->height)
@@ -58,10 +58,10 @@ void	set_z_limits(t_map *map)
 
 void	create_struct_mem(t_map *map)
 {
-	int	x;
+	int32_t	x;
 
-	map->z_gen = (int **)malloc(sizeof(int *) * map->height);
-	map->color_file = (int **)malloc(sizeof(int *) * map->height);
+	map->z_gen = (int32_t **)malloc(sizeof(int32_t *) * map->height);
+	map->color_file = (int32_t **)malloc(sizeof(int32_t *) * map->height);
 	if (!map->z_gen || !map->color_file)
 	{
 		free_map(map);
@@ -70,8 +70,8 @@ void	create_struct_mem(t_map *map)
 	x = -1;
 	while (++x < map->height)
 	{
-		map->z_gen[x] = (int *)malloc(sizeof(int) * map->width);
-		map->color_file[x] = (int *)malloc(sizeof(int) * map->width);
+		map->z_gen[x] = (int32_t *)malloc(sizeof(int32_t) * map->width);
+		map->color_file[x] = (int32_t *)malloc(sizeof(int32_t) * map->width);
 		if (!map->z_gen[x] || !map->color_file[x])
 		{
 			free_map(map);
@@ -80,9 +80,9 @@ void	create_struct_mem(t_map *map)
 	}
 }
 
-static int	get_width(t_map *map, char *line)
+static int32_t	get_width(t_map *map, char *line)
 {
-	int		width;
+	int32_t		width;
 	char	**split;
 
 	if (!line)
