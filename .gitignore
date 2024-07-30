@@ -53,14 +53,12 @@ dkms.conf
 
 # Own
 **/obj
-**/objb
-**/obj_bonus
 **/.git
 **/bin
+**/lib/MLX42/*
+**/lib/glfw/*
 
 # .vscode
 .DS_Store
-_INTRA/*
 
 fdf
-

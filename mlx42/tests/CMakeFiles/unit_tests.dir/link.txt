@@ -1,1 +1,0 @@
-/usr/bin/c++ -rdynamic CMakeFiles/unit_tests.dir/tests.o -o unit_tests   -L/home/user/Documents/CAMPUS42/fdf_pro/mlx42/tests/lib  lib/libgtest_main.a -lmlx42 lib/libgtest.a 

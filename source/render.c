@@ -6,74 +6,27 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/27 15:30:06 by csubires         ###   ########.fr       */
+/*   Updated: 2024/07/30 12:28:13 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
 
-int	render_menu(mlx_image_t *menu)
+static int	is_into_screen(t_fdfs *fdfs, int x, int y)
 {
-
-	int		x;
-	int		y;
-	int32_t	width = menu->width;
-	int32_t	height = menu->height;
-
-
-	set_bgcolor(menu, MENU_BG);
-
-	x = -1;
-	while (x++ < width)
-	{
-		y = -1;
-		while (y++ < height)
-		{
-			if (x < 5 || x > (width - 6) || y < 5 || y > (height - 6) || \
-			y == 160 || y == 280 || y == 420 || y == 530)
-				mlx_put_pixel(menu, x, y, MENU_BR);
-		}
-	}
-	return (1);
-}
-
-void	show_menu(t_fdfs *fdfs)
-{
-	int		y;
-	int		x;
-
-	x = (WIN_W - fdfs->menu->width) / 2;
-	y = (WIN_H - fdfs->menu->height) / 2;
-	if (mlx_image_to_window(fdfs->mlx, fdfs->menu, x, y) < 0)
-        error_and_exit("initialise_mlx", "mlx_image_to_window");
-	mlx_put_string(fdfs->mlx, M_TEXT_00, x + 40, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_02, x + 40, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_03, x + 40, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_04, x + 40, y += 60);
-	mlx_put_string(fdfs->mlx, M_TEXT_05, x + 130, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_06, x + 40, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_07, x + 40, y += 50);
-	mlx_put_string(fdfs->mlx, M_TEXT_08, x + 120, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_09, x + 40, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_10, x + 220, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_11, x + 40, y += 60);
-	mlx_put_string(fdfs->mlx, M_TEXT_12, x + 70, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_13, x + 70, y += 40);
-	mlx_put_string(fdfs->mlx, M_TEXT_14, x + 40, y += 60);
-	mlx_put_string(fdfs->mlx, M_TEXT_15, x + 40, y += 40);
+	return (x > 0 && y > 0
+		&& x < (int)fdfs->img->width
+		&& y < (int)fdfs->img->height
+	);
 }
 
 static void	init_bresenham(t_point *start, t_point *end,
 t_point *diff, t_point *sign)
 {
-	sign->x = -1;
-	sign->y = -1;
-	if (start->x < end->x)
-		sign->x = 1;
-	if (start->y < end->y)
-		sign->y = 1;
-	diff->x = ft_abs(end->x - start->x);
-	diff->y = ft_abs(end->y - start->y);
+	sign->x = (start->x < end->x) ? 1 : -1;
+	sign->y = (start->y < end->y) ? 1 : -1;
+	diff->x = abs(end->x - start->x);
+	diff->y = abs(end->y - start->y);
 }
 
 static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
@@ -82,54 +35,65 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 	t_point	sign;
 	t_point	diff;
 	int		line;
-	int		tmp;
+	int		tmp1;
+	int		color = random_color();
 
 	init_bresenham(&start, &end, &diff, &sign);
 	line = diff.x - diff.y;
 	cur = start;
-		int color = random_color();
-	while (cur.x != end.x || cur.y != end.y)
+	while ((cur.x != end.x || cur.y != end.y) && is_into_screen(fdfs, cur.x, cur.y))
 	{
-
- 		if (cur.x >= fdfs->img->width || cur.y >= fdfs->img->height)
-			break;
-
-		mlx_put_pixel(fdfs->img, cur.x, cur.y, get_color(start, end, cur, diff));
+		if (fdfs->state.one_color)
+		{
+			if (fdfs->state.dark_zero && (end.z - start.z < 1))
+				mlx_put_pixel(fdfs->img, cur.x, cur.y, 0x000000FF);
+			else
+				mlx_put_pixel(fdfs->img, cur.x, cur.y, fdfs->state.one_color);
+		}
+		else
+			mlx_put_pixel(fdfs->img, cur.x, cur.y, get_color(start, end, cur, diff));
 
 		// MODE MULTICOLOR
 		if (fdfs->state.multi_color)
 		{
-			int x = 0;
-			while (x++ < 5)
+			tmp1 = 0;
+			while (tmp1++ < LINE_SIZE)
 			{
-				mlx_put_pixel(fdfs->img, cur.x+x, cur.y+x, color);
-				mlx_put_pixel(fdfs->img, cur.x-x, cur.y-x, color);
-				mlx_put_pixel(fdfs->img, cur.x+x, cur.y-x, color);
-				mlx_put_pixel(fdfs->img, cur.x-x, cur.y+x, color);
+				if (is_into_screen(fdfs, cur.x+tmp1, cur.y+tmp1))
+					mlx_put_pixel(fdfs->img, cur.x+tmp1, cur.y+tmp1, color);
+				if (is_into_screen(fdfs, cur.x-tmp1, cur.y-tmp1))
+					mlx_put_pixel(fdfs->img, cur.x-tmp1, cur.y-tmp1, color);
+				if (is_into_screen(fdfs, cur.x+tmp1, cur.y-tmp1))
+					mlx_put_pixel(fdfs->img, cur.x+tmp1, cur.y-tmp1, color);
+				if (is_into_screen(fdfs, cur.x-tmp1, cur.y+tmp1))
+					mlx_put_pixel(fdfs->img, cur.x-tmp1, cur.y+tmp1, color);
 			}
 		}
 
 		// MODO EXTRA PIXEL
 		if (fdfs->state.extra_pixel)
 		{
-			int x = 0;
-			while (x++ < 5)
+			tmp1 = 0;
+			while (tmp1++ < LINE_SIZE)
 			{
-				mlx_put_pixel(fdfs->img, cur.x+x, cur.y+x, get_color(start, end, cur, diff));
-				mlx_put_pixel(fdfs->img, cur.x-x, cur.y-x, get_color(start, end, cur, diff));
-				mlx_put_pixel(fdfs->img, cur.x+x, cur.y-x, get_color(start, end, cur, diff));
-				mlx_put_pixel(fdfs->img, cur.x-x, cur.y+x, get_color(start, end, cur, diff));
+				if (is_into_screen(fdfs, cur.x+tmp1, cur.y+tmp1))
+					mlx_put_pixel(fdfs->img, cur.x+tmp1, cur.y+tmp1, get_color(start, end, cur, diff));
+				if (is_into_screen(fdfs, cur.x-tmp1, cur.y-tmp1))
+					mlx_put_pixel(fdfs->img, cur.x-tmp1, cur.y-tmp1, get_color(start, end, cur, diff));
+				if (is_into_screen(fdfs, cur.x+tmp1, cur.y-tmp1))
+					mlx_put_pixel(fdfs->img, cur.x+tmp1, cur.y-tmp1, get_color(start, end, cur, diff));
+				if (is_into_screen(fdfs, cur.x-tmp1, cur.y+tmp1))
+					mlx_put_pixel(fdfs->img, cur.x-tmp1, cur.y+tmp1, get_color(start, end, cur, diff));
 			}
 		}
 
-
-		tmp = line * 2;
-		if (tmp > -diff.y)
+		tmp1 = line * 2;
+		if (tmp1 > -diff.y)
 		{
 			line -= diff.y;
 			cur.x += sign.x;
 		}
-		if (tmp < diff.x)
+		if (tmp1 < diff.x)
 		{
 			line += diff.x;
 			cur.y += sign.y;
@@ -140,9 +104,11 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 void	render_map(void *param)
 {
 	t_fdfs *fdfs = (t_fdfs *)param;
-
 	int	x;
 	int	y;
+
+	if (!fdfs->state.disable_clean && fdfs->state.bg_color)
+		set_bgcolor(fdfs->img, fdfs->state.bg_color);
 
 	if (!fdfs->state.disable_clean && !fdfs->state.bg_color)
 		set_bgcolor(fdfs->img, 0x000000FF);
@@ -166,9 +132,10 @@ void	render_map(void *param)
 			}
 		}
 
+		// MODO ESPEJO
 		if (fdfs->state.mirror)
 		{
-			fdfs->flat = fdfs->flat * -1;
+			fdfs->flat = -fdfs->flat;
 			y = -1;
 			while (++y < fdfs->map->height)
 			{
@@ -190,6 +157,5 @@ void	render_map(void *param)
 			}
 		}
 	}
-
 
 }

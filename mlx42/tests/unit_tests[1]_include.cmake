@@ -1,5 +1,0 @@
-if(EXISTS "/home/user/Documents/CAMPUS42/fdf_pro/mlx42/tests/unit_tests[1]_tests.cmake")
-  include("/home/user/Documents/CAMPUS42/fdf_pro/mlx42/tests/unit_tests[1]_tests.cmake")
-else()
-  add_test(unit_tests_NOT_BUILT unit_tests_NOT_BUILT)
-endif()

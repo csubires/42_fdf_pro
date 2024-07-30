@@ -6,30 +6,23 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/27 15:20:25 by csubires         ###   ########.fr       */
+/*   Updated: 2024/07/30 13:13:42 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
 
-static void	lambda(char *c)
-{
-	*c = ft_toupper(*c);
-}
 
 static int	parse_color(t_map *map, char *s)
 {
-	while (*s && (ft_isdigit(*s) || *s == '-' || *s == '+' || *s == ','))
+	while (*s && (isdigit(*s) || *s == '-' || *s == '+' || *s == ','))
 		s++;
 	if (*s && *s == 'x')
 	{
 		map->has_color = 1;
-		ft_striter(s + 1, lambda);
-		return (ft_atoi_base(s + 1, HEX_BASE));
+		return (strtol(s + 1, 0, 16));
 	}
-	else
-		return (BG_COLOR);
-	return (0);
+	return (BG_COLOR);
 }
 
 static void	map_to_mem(t_map *map, int fd)
@@ -38,7 +31,6 @@ static void	map_to_mem(t_map *map, int fd)
 	int		y;
 	char	*line;
 	char	**split;
-	int		error;
 
 	y = -1;
 	while (++y < map->height)
@@ -53,15 +45,13 @@ static void	map_to_mem(t_map *map, int fd)
 		x = -1;
 		while (++x < map->width)
 		{
-			map->z_gen[y][x] = ft_atoi(split[x], &error);
+			map->z_gen[y][x] = strtol(split[x], 0, 10);
 			map->color_file[y][x] = parse_color(map, split[x]);
 		}
 		ft_free_split(split);
 		free(line);
 	}
 }
-
-// get_dimensions(fd, map);
 
 static void	parse_file(t_map *map, char *file)
 {
@@ -82,14 +72,14 @@ void	parse_args(t_map **map, int argc, char *argv[])
 	if (argc != 2)
 		error_and_exit(" Incorrect arguments", \
 		"\nUse: ./fdf maps/name_map.fdf");
-	ft_printf("\n Preparing map, wait...\n");
-	ft_printf(" [+] Reading file fdf\n");
+	printf("\n Preparing map, wait...\n");
+	printf(" [+] Reading file fdf\n");
 	*map = initialise_map(argv[1]);
-	ft_printf(" [+] Creating the memory structure\n");
+	printf(" [+] Creating the memory structure\n");
 	create_struct_mem(*map);
-	ft_printf(" [+] Loading map into memory\n");
+	printf(" [+] Loading map into memory\n");
 	parse_file(*map, argv[1]);
-	ft_printf(" [+] Obtaining isometric coordinates\n");
+	printf(" [+] Obtaining isometric coordinates\n");
 	set_z_limits(*map);
-	ft_printf(" All ready. Press [ENTER] to open the help menu.\n");
+	printf(" All ready. Press [ENTER] to open the help menu.\n");
 }

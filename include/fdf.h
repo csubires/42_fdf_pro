@@ -13,6 +13,7 @@
 #ifndef FDF_H
 # define FDF_H
 
+# include <ctype.h>
 # include <string.h>
 # include <math.h>
 # include <stdlib.h>
@@ -20,25 +21,22 @@
 # include <stdio.h>
 # include "colors.h"
 # include "config.h"
-# include "keys.h"
 # include "structs.h"
-# include "../libft/libft.h"
-# include "../mlx42/include/MLX42/MLX42.h"
+# include "../lib/libft/libft.h"
+# include "../lib/MLX42/include/MLX42/MLX42.h"
 
 # include <stdint.h>
 # include <memory.h>
 
-# define BPP sizeof(int32_t)
-
-
+void mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void* param);
 void	zoom_and_altitude(void *param);
 void	move(void *param);
 void	rotation(void *param);
 
-void		key_event(void *param);
+void key_hook(mlx_key_data_t keydata, void* param);
 // COLOR.C
 int		get_color(t_point start, t_point end, t_point current, t_point delta);
-int		generate_color(t_fdfs *fdfs, int cur_z);
+int		gen_gradient(t_fdfs *fdfs, int cur_z);
 void	set_bgcolor(mlx_image_t *img, int color);
 
 // COLOR_UTILS.C
@@ -50,12 +48,12 @@ int get_b(int rgba);
 int get_a(int rgba);
 
 
-int32_t	random_color(void);
+int	random_color(void);
 void	set_palette(t_palette *palette, int selected);
 
 // KEYS.C
 
-int		mouse_hook(int button, int x, int y, void *p);
+
 
 // MAIN.C
 
@@ -69,8 +67,7 @@ t_map	*initialise_map(char *file);
 void	parse_args(t_map **map, int argc, char *argv[]);
 
 // RENDER.C
-int		render_menu(mlx_image_t *fdfs);
-void	show_menu(t_fdfs *fdfs);
+void	render_menu(t_fdfs *fdfs);
 void	render_map(void *param);
 
 // RENDER_UTILS.C
@@ -89,6 +86,6 @@ void	reset_fdfs(t_fdfs *fdfs);
 
 
 void	ft_hook(void *param);
-void my_scrollhook(double xdelta, double ydelta, void* param);
+
 
 #endif

@@ -9,7 +9,7 @@
 /*   Updated: 2024/07/16 12:58:47 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../mlx42/include/MLX42/MLX42.h"
+#include "../lib/MLX42/include/MLX42/MLX42.h"
 
 #ifndef STRUCTS_H
 # define STRUCTS_H
@@ -50,6 +50,7 @@ typedef struct s_state
 	int			extra_pixel;
 	int			dark_zero;
 	int			multi_color;
+	int			one_color;
 	int			mirror;
 	t_palette	palette;
 }	t_state;
@@ -66,17 +67,17 @@ typedef struct s_point
 // VARS FOR A INSTANCE OF PROGRAM
 typedef struct s_fdfs
 {
-	void	*mlx;
-	t_map	*map;
+	void		*mlx;
+	t_map		*map;
 	mlx_image_t	*img;
 	mlx_image_t	*menu;
 	int32_t		step_x;
 	int32_t		step_y;
-	float	rotate_x;
-	float	rotate_y;
-	float	rotate_z;
-	t_state	state;
-	float	zoom;
-	float	flat;
+	float		rotate_x;
+	float		rotate_y;
+	float		rotate_z;
+	t_state		state;
+	float		zoom;
+	float		flat;
 }	t_fdfs;
 #endif

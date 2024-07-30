@@ -6,11 +6,17 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/25 19:48:48 by csubires         ###   ########.fr       */
+/*   Updated: 2024/07/30 13:13:42 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
+
+void	error_and_exit(const char *func, const char *msg)
+{
+	printf("Error in function \"%s\": %s", func, msg);
+	exit(-1);
+}
 
 void	free_all(t_fdfs *fdfs)
 {
@@ -47,7 +53,7 @@ t_point	new_point(int x, int y, t_fdfs *fdfs)
 	if (fdfs->map->has_color)
 		new.color = fdfs->map->color_file[y][x];
 	else
-		new.color = generate_color(fdfs, new.z);
+		new.color = gen_gradient(fdfs, new.z);
 	return (new);
 }
 
@@ -78,10 +84,13 @@ void	reset_fdfs(t_fdfs *fdfs)
 	fdfs->state.menu = 0;
 	fdfs->state.zenith = 1;
 	fdfs->state.rnd_color = 0;
+	fdfs->state.bg_color = 0x000000FF;
+	fdfs->state.one_color = 0;
 	fdfs->state.map_color = 0;
 	fdfs->state.disable_clean = 0;
 	fdfs->state.extra_pixel = 0;
 	fdfs->state.multi_color = 0;
 	fdfs->state.dark_zero = 0;
 	fdfs->state.mirror = 0;
+	fdfs->menu->enabled = false;
 }

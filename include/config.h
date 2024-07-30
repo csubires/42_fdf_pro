@@ -13,38 +13,38 @@
 #ifndef CONFIG_H
 # define CONFIG_H
 
-# ifndef HEX_BASE
-#  define HEX_BASE "0123456789ABCDFG"
-# endif
-# ifndef WIN_W
-#  define WIN_W 1920
-# endif
-# ifndef WIN_H
-#  define WIN_H 1080
-# endif
 
-# ifndef MENU_W
-#  define MENU_W 600
-# endif
-# ifndef MENU_H
-#  define MENU_H 700
-# endif
+# define HEX_BASE "0123456789ABCDFG"
 
 
-# ifndef STEP
-#  define STEP 10
-# endif
-# ifndef ROT_STEP
-#  define ROT_STEP 0.05
-# endif
-# ifndef ZOOM_STEP
-#  define ZOOM_STEP 0.5
-# endif
-# ifndef ALTITUDE_STEP
-#  define ALTITUDE_STEP 0.1
-# endif
+# define WIN_W 1920
 
-# define BG_COLOR	0xFFFFFFFF
+
+# define WIN_H 1080
+
+
+
+# define MENU_W 1100
+
+
+# define MENU_H 850
+
+
+
+# define STEP 10
+
+
+# define ROT_STEP 0.05
+
+
+# define ZOOM_STEP 0.5
+
+
+# define ALTITUDE_STEP 0.1
+
+
+# define LINE_SIZE	5
+# define BG_COLOR	0x000000FF
 # define DEGREE_30	0.523599
 # define DEGREE_45	0.785399
 # define DEGREE_60	1.047197

@@ -24,7 +24,7 @@ librería math (-lm opción del
 compilador, man 3 math)
 • Todas las funciones de la
 librería MiniLibX
-• ft_printf y cualquier función
+• printf y cualquier función
 que TÚ hayas programado
 
 ## Restricciones

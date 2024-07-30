@@ -1,10 +1,8 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "../MLX42/include/MLX42/MLX42.h"
-#include "../MLX42/_deps/glfw-src/include/GLFW/glfw3.h"
-
+#include "../lib/MLX42/include/MLX42/MLX42.h"
+#include "../lib/glfw/include/GLFW/glfw3.h"
 
 #define WIDTH 512
 #define HEIGHT 512
