@@ -78,7 +78,8 @@
 		"mlx.h": "c",
 		"fdf_bonus.h": "c",
 		"fdf.h": "c",
-		"config_bonus.h": "c"
+		"config_bonus.h": "c",
+		"cmath": "c"
 	},
 
 }

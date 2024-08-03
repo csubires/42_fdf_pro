@@ -28,6 +28,10 @@
 # include <stdint.h>
 # include <memory.h>
 
+# define M_PI           3.14159265358979323846
+
+void mapToSphere(t_fdfs *fdfs, int **z, int n, int m);
+
 void mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void* param);
 void	zoom_and_altitude(void *param);
 void	move(void *param);
@@ -81,7 +85,7 @@ void	rotate_z(t_fdfs *fdfs, int *x, int *y);
 void	free_all(t_fdfs *fdfs);
 void	isometric(t_fdfs *fdfs, int *x, int *y, int z);
 t_point	new_point(int x, int y, t_fdfs *fdfs);
-t_point	get_coordinate(t_fdfs *fdfs, t_point point);
+t_point	set_changes(t_fdfs *fdfs, t_point point);
 void	reset_fdfs(t_fdfs *fdfs);
 
 

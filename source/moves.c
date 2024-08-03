@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_utils.c                                     :+:      :+:    :+:   */
+/*   moves.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 08:56:20 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/30 12:24:44 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/02 20:24:40 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,22 @@ void	rotate_z(t_fdfs *fdfs, int *x, int *y)
 	tmp_x = *x;
 	*x = (*x * cos(fdfs->rotate_z)) - (*y * sin(fdfs->rotate_z));
 	*y = (tmp_x * sin(fdfs->rotate_z)) + (*y * cos(fdfs->rotate_z));
+}
+
+
+
+void	mode_strange00(t_fdfs *fdfs, int *x, int *y, int *z)
+{
+	float r = 10.0;
+
+	float x_norm = 2 * *x  / (fdfs->map->width - 1) - 1;
+    float y_norm = 2 * *y / (fdfs->map->height - 1) - 1;
+
+    float theta = x_norm * M_PI;
+    float phi = y_norm * (M_PI / 2);
+
+	*x = r * cos(phi) * cos(theta);
+	*y = r * cos(phi) * sin(theta);
+	*z = r * sin(phi);
+
 }

@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/30 12:28:13 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/02 18:32:16 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,11 @@ void	render_map(void *param)
 	int	x;
 	int	y;
 
+	clock_t	t;
+
+	t = clock();
+
+
 	if (!fdfs->state.disable_clean && fdfs->state.bg_color)
 		set_bgcolor(fdfs->img, fdfs->state.bg_color);
 
@@ -123,12 +128,12 @@ void	render_map(void *param)
 			{
 				if (x < fdfs->map->width - 1)
 					bresenham(fdfs,
-						get_coordinate(fdfs, new_point(x, y, fdfs)),
-						get_coordinate(fdfs, new_point(x + 1, y, fdfs)));
+						set_changes(fdfs, new_point(x, y, fdfs)),
+						set_changes(fdfs, new_point(x + 1, y, fdfs)));
 				if (y < fdfs->map->height - 1)
 					bresenham(fdfs,
-						get_coordinate(fdfs, new_point(x, y, fdfs)),
-						get_coordinate(fdfs, new_point(x, y + 1, fdfs)));
+						set_changes(fdfs, new_point(x, y, fdfs)),
+						set_changes(fdfs, new_point(x, y + 1, fdfs)));
 			}
 		}
 
@@ -147,15 +152,18 @@ void	render_map(void *param)
 
 					if (x < fdfs->map->width - 1)
 						bresenham(fdfs,
-							get_coordinate(fdfs, new_point(x, y, fdfs)),
-							get_coordinate(fdfs, new_point(x + 1, y, fdfs)));
+							set_changes(fdfs, new_point(x, y, fdfs)),
+							set_changes(fdfs, new_point(x + 1, y, fdfs)));
 					if (y < fdfs->map->height - 1)
 						bresenham(fdfs,
-							get_coordinate(fdfs, new_point(x, y, fdfs)),
-							get_coordinate(fdfs, new_point(x, y + 1, fdfs)));
+							set_changes(fdfs, new_point(x, y, fdfs)),
+							set_changes(fdfs, new_point(x, y + 1, fdfs)));
 				}
 			}
 		}
 	}
+
+	t = clock() - t;
+	//printf("Performance: %f, ", ((double)t) / CLOCKS_PER_SEC);
 
 }

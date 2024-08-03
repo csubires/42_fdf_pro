@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/30 13:13:42 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/02 19:45:58 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,31 @@ t_point	new_point(int x, int y, t_fdfs *fdfs)
 	return (new);
 }
 
-t_point	get_coordinate(t_fdfs *fdfs, t_point point)
+
+
+void	mode_strange(t_fdfs *fdfs, int *x, int *y, int z)
 {
+
+
+	// Coordenadas esféricas
+	double theta = (*x / (double)(fdfs->map->width - 1)) * M_PI;
+	double phi = (*y / (double)(fdfs->map->height - 1)) * 2 * M_PI;
+
+	// Altura y radio
+	double r = fdfs->zoom + z; // R es el radio base
+
+	// Coordenadas en la esfera
+	*x = (int)(r * sin(theta) * cos(phi));
+	*y = (int)(r * sin(theta) * sin(phi));
+
+	*x += WIN_W / 2;
+	*y += WIN_H / 2;
+
+}
+
+t_point	set_changes(t_fdfs *fdfs, t_point point)
+{
+
 	point.x *= fdfs->zoom;
 	point.y *= fdfs->zoom;
 	point.z *= (fdfs->zoom / 10) * fdfs->flat;
@@ -68,6 +91,9 @@ t_point	get_coordinate(t_fdfs *fdfs, t_point point)
 	isometric(fdfs, &point.x, &point.y, point.z);
 	point.x += fdfs->step_x;
 	point.y += fdfs->step_y;
+
+	//mode_strange(fdfs, &point.x, &point.y, point.z);
+
 	return (point);
 }
 

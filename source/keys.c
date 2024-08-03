@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/30 12:11:30 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/02 19:07:00 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,6 +262,13 @@ void key_hook(mlx_key_data_t keydata, void* param)
 			fdfs->state.one_color = random_color();
 		else
 			fdfs->state.one_color = 0;
+	}
+
+	if (keydata.key == MLX_KEY_7 && keydata.action == MLX_RELEASE)
+	{
+		is_key_down = 1;
+		//mode_strange(fdfs);
+
 	}
 
 	if (keydata.key == MLX_KEY_R && keydata.action == MLX_RELEASE)

@@ -6,7 +6,7 @@
 #    By: csubires <csubires@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/18 13:48:18 by csubires          #+#    #+#              #
-#    Updated: 2024/07/30 12:27:45 by csubires         ###   ########.fr        #
+#    Updated: 2024/08/02 17:24:34 by csubires         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,8 +19,6 @@ C_FILES = main.c	\
 		parse.c	\
 		menu.c	\
 		utils.c
-
-# --------------------------------------
 
 MLX42_FILE	= lib/MLX42/libmlx42.a
 GLFW_FILE	= lib/glfw/src/libglfw3.a
@@ -38,18 +36,18 @@ RED			= \033[1;31m
 BLUE		= \033[1;34m
 ENDC		= \033[0m
 
-MAKEFLAGS	+= --no-print-directory
 CFLAGS		= -Wall -Werror -Wextra -Wunreachable-code -Ofast
 CFLAGS 		+= -D WIN_W=1920 -D WIN_H=1080
 LIBS		= -L. -l:$(LIBFT_FILE) -l:$(MLX42_FILE) -l:$(GLFW_FILE)
 MLXFLAGS	= -lm -g -pthread -ffast-math
+MAKEFLAGS	+= --no-print-directory
 
 # --------------------------------------
 
 all: $(NAME)
 
 $(NAME):	$(O_FILES) $(LIBFT_FILE) $(MLX42_FILE) $(GLFW_FILE)
-	@$(PRINT) "$(GREEN)EXECUTABLE:$(ENDC)	$@"
+	@$(PRINT) "$(GREEN)Compiling program executable:$(ENDC)	$@"
 	@$(CC) $(O_FILES) -o $@ $(LIBS) $(CFLAGS) $(MLXFLAGS)
 
 $(O_DIR)/%.o:	$(C_DIR)/%.c $(LIBFT_FILE) $(MLX42_FILE) | $(O_DIR)
@@ -57,7 +55,7 @@ $(O_DIR)/%.o:	$(C_DIR)/%.c $(LIBFT_FILE) $(MLX42_FILE) | $(O_DIR)
 	@$(CC) -c $< -o $@ $(LIBS) $(CFLAGS) $(MLXFLAGS)
 
 $(LIBFT_FILE):
-	@make -C "lib/libft" added
+	@make -C "lib/libft"
 
 $(MLX42_FILE):
 	@rm lib/MLX42/CMakeCache.txt 2>/dev/null ; true
