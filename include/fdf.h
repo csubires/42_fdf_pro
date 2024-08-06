@@ -32,8 +32,8 @@
 
 void mapToSphere(t_fdfs *fdfs, int **z, int n, int m);
 
+void	mouse_scroll(double xdelta, double ydelta, void* param);
 void mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void* param);
-void	zoom_and_altitude(void *param);
 void	move(void *param);
 void	rotation(void *param);
 
@@ -53,7 +53,7 @@ int get_a(int rgba);
 
 
 int	random_color(void);
-void	set_palette(t_palette *palette, int selected);
+void	set_palette(t_palette *palette, int pal);
 
 // KEYS.C
 

@@ -25,33 +25,43 @@ typedef struct s_map
 	int	max_z;
 }	t_map;
 
-// SET COLORS FOR MAP
+// SET COLORS
 typedef struct s_palette
 {
-	int32_t	color_1;
-	int32_t	color_2;
-	int32_t	color_3;
-	int32_t	color_4;
-	int32_t	color_5;
-	int32_t	color_6;
-	int32_t	color_7;
-	int32_t	color_8;
+	int32_t		color_1;
+	int32_t		color_2;
+	int32_t		color_3;
+	int32_t		color_4;
+	int32_t		color_5;
+	int32_t		color_6;
+	int32_t		color_7;
+	int32_t		color_8;
 }	t_palette;
 
 // OPTIONS OF PROGRAM
 typedef struct s_state
 {
-	int			rnd_color;
-	int			map_color;
+
 	int			zenith;
 	int			menu;
 	int			disable_clean;
 	int			bg_color;
 	int			extra_pixel;
 	int			dark_zero;
-	int			multi_color;
-	int			one_color;
+	int			desplace;
 	int			mirror;
+	int			mod_00;
+	int			mod_01;
+	int			mod_02;
+	int			mod_03;
+	int			mod_04;
+
+	int			one_color;
+	int			rnd_color;
+	int			map_color;
+	int			multi_color;
+
+
 	t_palette	palette;
 }	t_state;
 
@@ -80,4 +90,7 @@ typedef struct s_fdfs
 	float		zoom;
 	float		flat;
 }	t_fdfs;
+
+
+
 #endif

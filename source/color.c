@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/30 12:51:08 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/06 12:44:07 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,11 @@ int	gen_gradient(t_fdfs *fdfs, int cur_z)
 {
 	double	gradient = interpolate(fdfs->map->min_z, fdfs->map->max_z, cur_z);
 
-	if (!fdfs->state.rnd_color && !fdfs->state.map_color)
-		set_palette(&fdfs->state.palette, 1);
+	if (!(fdfs->state.rnd_color) && !(fdfs->state.map_color))
+	{
+
+		set_palette(&fdfs->state.palette, 0xFF0000FF);
+	}
 
 	if (gradient < 0.15)
 		return (fdfs->state.palette.color_1);
@@ -145,12 +148,28 @@ static void	set_palette_rdm(t_palette *palette)
 	palette->color_8 = random_color();
 }
 
-void	set_palette(t_palette *palette, int selected)
+static void	set_palette_one(t_palette *palette, int color)
 {
-	if (selected == 0)
+	palette->color_1 = color;
+	palette->color_2 = color;
+	palette->color_3 = color;
+	palette->color_4 = color;
+	palette->color_5 = color;
+	palette->color_6 = color;
+	palette->color_7 = color;
+	palette->color_8 = color;
+}
+
+void	set_palette(t_palette *palette, int pal)
+{
+	if (pal == 0)
 		set_palette_rdm(palette);
-	if (selected == 1)
+	if (pal == 1)
 		set_palete_default(palette);
-	if (selected == 2)
+	if (pal == 2)
 		set_palette_map(palette);
+	if (pal == 3)
+		set_palette_one(palette, random_color());
+	if (pal == 4)
+		set_palette_one(palette, 0xFF0000FF);
 }

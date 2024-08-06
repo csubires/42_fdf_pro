@@ -38,21 +38,3 @@ void	rotate_z(t_fdfs *fdfs, int *x, int *y)
 	*x = (*x * cos(fdfs->rotate_z)) - (*y * sin(fdfs->rotate_z));
 	*y = (tmp_x * sin(fdfs->rotate_z)) + (*y * cos(fdfs->rotate_z));
 }
-
-
-
-void	mode_strange00(t_fdfs *fdfs, int *x, int *y, int *z)
-{
-	float r = 10.0;
-
-	float x_norm = 2 * *x  / (fdfs->map->width - 1) - 1;
-    float y_norm = 2 * *y / (fdfs->map->height - 1) - 1;
-
-    float theta = x_norm * M_PI;
-    float phi = y_norm * (M_PI / 2);
-
-	*x = r * cos(phi) * cos(theta);
-	*y = r * cos(phi) * sin(theta);
-	*z = r * sin(phi);
-
-}

@@ -6,13 +6,27 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/02 19:07:00 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/06 13:54:54 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
 
 unsigned char	is_key_down;
+
+void	mouse_scroll(double xdelta, double ydelta, void* param)
+{
+	t_fdfs	*fdfs = (t_fdfs *)param;
+	is_key_down = 0;
+	(void)xdelta;
+
+	if (ydelta > 0)
+		(fdfs->zoom -= ZOOM_STEP * 2) && (is_key_down = 1);
+	else if (ydelta < 0)
+		(fdfs->zoom += ZOOM_STEP * 2) && (is_key_down = 1);
+	if (is_key_down)
+		render_map(fdfs);
+}
 
 void mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void* param)
 {
@@ -26,113 +40,6 @@ void mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void* 
 		(fdfs->rotate_z -= ROT_STEP) && (is_key_down = 1);
 	if (button == MLX_MOUSE_BUTTON_MIDDLE && action == MLX_RELEASE)
 		(fdfs->state.zenith = !fdfs->state.zenith) && (is_key_down = 1);
-	if (is_key_down)
-		render_map(fdfs);
-
-/*
-
-	if (mlx_is_mouse_down(fdfs->mlx, 0))
-	{
-
-
-		int medx = WIN_W / 2;
-		int medy = WIN_H / 2;
-
-
-		if (x < medx && y < medy) // 1
-		{
-			fdfs->step_x += 5;
-			fdfs->step_y += 5;
-		}
-
-		if (x > medx && y < medy) // 2
-		{
-			fdfs->step_x -= 5;
-			fdfs->step_y += 5;
-		}
-
-		if (x < medx && y > medy) // 3
-		{
-			fdfs->step_x += 5;
-			fdfs->step_y -= 5;
-		}
-
-		if (x > medx && y > medy) // 4
-		{
-			fdfs->step_x -= 5;
-			fdfs->step_y -= 5;
-		}
-
-		fdfs->zoom += ZOOM_STEP;
-	}
-
-	if (mlx_is_mouse_down(fdfs->mlx, 0))
-	{
-
-		int medx = WIN_W / 2;
-		int medy = WIN_H / 2;
-
-
-		if (x < medx && y < medy) // 1
-		{
-			fdfs->step_x -= 5;
-			fdfs->step_y -= 5;
-		}
-
-		if (x > medx && y < medy) // 2
-		{
-			fdfs->step_x += 5;
-			fdfs->step_y -= 5;
-		}
-
-		if (x < medx && y > medy) // 3
-		{
-			fdfs->step_x -= 5;
-			fdfs->step_y += 5;
-		}
-
-		if (x > medx && y > medy) // 4
-		{
-			fdfs->step_x += 5;
-			fdfs->step_y += 5;
-		}
-
-
-		fdfs->zoom -= ZOOM_STEP;
-
-
-	}
-
-
-	(void)param;
-	// Simple up or down detection.
-	if (y > 0)
-		printf("Up!");
-	else if (y < 0)
-		printf("Down!");
-
-	// Can also detect a mousewheel that goes along the X (e.g: MX Master 3)
-	if (x < 0)
-		printf("Sliiiide to the left!");
-	else if (x > 0)
-		printf("Sliiiide to the right!");
-
-		*/
-}
-
-void	zoom_and_altitude(void *param)
-{
-	t_fdfs	*fdfs = (t_fdfs *)param;
-	is_key_down = 0;
-
-	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_Q) && fdfs->zoom > 0)
-		(fdfs->zoom -= ZOOM_STEP) && (is_key_down = 1);
-	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_E) && fdfs->zoom < 100)
-		(fdfs->zoom += ZOOM_STEP) && (is_key_down = 1);
-	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_G) && fdfs->flat < 50)
-		(fdfs->flat += ALTITUDE_STEP) && (is_key_down = 1);
-	if (mlx_is_key_down(fdfs->mlx, MLX_KEY_V) && fdfs->flat > -50)
-		(fdfs->flat -= ALTITUDE_STEP) && (is_key_down = 1);
 	if (is_key_down)
 		render_map(fdfs);
 }
@@ -175,11 +82,16 @@ void	rotation(void *param)
 		render_map(fdfs);
 }
 
-
 void key_hook(mlx_key_data_t keydata, void* param)
 {
 	t_fdfs	*fdfs = (t_fdfs *)param;
 	is_key_down = 0;
+
+	if (keydata.key == MLX_KEY_SPACE && keydata.action == MLX_RELEASE)
+	{
+		is_key_down = 1;
+		fdfs->state.desplace = !fdfs->state.desplace;
+	}
 
 	if (keydata.key == MLX_KEY_ENTER && keydata.action == MLX_RELEASE)
 	{
@@ -195,19 +107,25 @@ void key_hook(mlx_key_data_t keydata, void* param)
 			fdfs->menu->enabled = true;
 		}
 	}
+
 	if (keydata.key == MLX_KEY_J && keydata.action == MLX_RELEASE)
 	{
 		is_key_down = 1;
-		fdfs->state.map_color = 0;
 		fdfs->state.rnd_color = !fdfs->state.rnd_color;
-		set_palette(&fdfs->state.palette, 0);
+		if (fdfs->state.rnd_color)
+			set_palette(&fdfs->state.palette, 0);
+		else
+			set_palette(&fdfs->state.palette, 1);
 	}
+
 	if (keydata.key == MLX_KEY_M && keydata.action == MLX_RELEASE)
 	{
 		is_key_down = 1;
-		fdfs->state.rnd_color = 0;
 		fdfs->state.map_color = !fdfs->state.map_color;
-		set_palette(&fdfs->state.palette, 2);
+		if (fdfs->state.map_color)
+			set_palette(&fdfs->state.palette, 2);
+		else
+			set_palette(&fdfs->state.palette, 1);
 	}
 
 	if (keydata.key == MLX_KEY_0 && keydata.action == MLX_RELEASE)
@@ -237,7 +155,14 @@ void key_hook(mlx_key_data_t keydata, void* param)
 	if (keydata.key == MLX_KEY_3 && keydata.action == MLX_RELEASE)
 	{
 		is_key_down = 1;
-		fdfs->state.multi_color = !fdfs->state.multi_color;
+		if (fdfs->state.multi_color)
+		{
+			fdfs->state.multi_color = 0;
+		}
+		else
+		{
+			fdfs->state.multi_color = 1;
+		}
 	}
 
 	if (keydata.key == MLX_KEY_4 && keydata.action == MLX_RELEASE)
@@ -258,24 +183,52 @@ void key_hook(mlx_key_data_t keydata, void* param)
 	if (keydata.key == MLX_KEY_6 && keydata.action == MLX_RELEASE)
 	{
 		is_key_down = 1;
-		if (!fdfs->state.one_color)
-			fdfs->state.one_color = random_color();
+		if (fdfs->state.rnd_color)
+		{
+			fdfs->state.rnd_color = 0;
+			set_palette(&fdfs->state.palette, 3);
+		}
 		else
-			fdfs->state.one_color = 0;
+		{
+			fdfs->state.rnd_color = 1;
+			set_palette(&fdfs->state.palette, 1);
+		}
+
 	}
 
-	if (keydata.key == MLX_KEY_7 && keydata.action == MLX_RELEASE)
+	if (keydata.key == MLX_KEY_KP_0 && keydata.action == MLX_RELEASE)
 	{
 		is_key_down = 1;
-		//mode_strange(fdfs);
+		fdfs->state.mod_00 = !fdfs->state.mod_00;
+	}
 
+	if (keydata.key == MLX_KEY_KP_1 && keydata.action == MLX_RELEASE)
+	{
+		is_key_down = 1;
+		fdfs->state.mod_01 = !fdfs->state.mod_01;
+	}
+
+	if (keydata.key == MLX_KEY_KP_2 && keydata.action == MLX_RELEASE)
+	{
+		is_key_down = 1;
+		fdfs->state.mod_02 = !fdfs->state.mod_02;
+	}
+
+	if (keydata.key == MLX_KEY_KP_3 && keydata.action == MLX_RELEASE)
+	{
+		is_key_down = 1;
+		fdfs->state.mod_03 = !fdfs->state.mod_03;
+	}
+
+	if (keydata.key == MLX_KEY_KP_4 && keydata.action == MLX_RELEASE)
+	{
+		is_key_down = 1;
+		fdfs->state.mod_04 = !fdfs->state.mod_04;
 	}
 
 	if (keydata.key == MLX_KEY_R && keydata.action == MLX_RELEASE)
 	{
 		is_key_down = 1;
-		fdfs->state.map_color = 0;
-		fdfs->state.rnd_color = 0;
 		reset_fdfs(fdfs);
 	}
 
@@ -287,6 +240,15 @@ void key_hook(mlx_key_data_t keydata, void* param)
 
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_RELEASE)
 		mlx_close_window(fdfs->mlx);
+
+	if (keydata.key == MLX_KEY_Q && keydata.action == MLX_RELEASE)
+		(fdfs->zoom -= ZOOM_STEP) && (is_key_down = 1);
+	if (keydata.key == MLX_KEY_E && keydata.action == MLX_RELEASE)
+		(fdfs->zoom += ZOOM_STEP) && (is_key_down = 1);
+	if (keydata.key == MLX_KEY_G)
+		(fdfs->flat += ALTITUDE_STEP) && (is_key_down = 1);
+	if (keydata.key == MLX_KEY_V)
+		(fdfs->flat -= ALTITUDE_STEP) && (is_key_down = 1);
 
 	if (is_key_down)
 		render_map(fdfs);

@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/02 18:32:16 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/06 13:14:34 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@ static int	is_into_screen(t_fdfs *fdfs, int x, int y)
 	);
 }
 
-static void	init_bresenham(t_point *start, t_point *end,
-t_point *diff, t_point *sign)
+static void	init_bresenham(t_point *start, t_point *end, t_point *diff, t_point *sign)
 {
 	sign->x = (start->x < end->x) ? 1 : -1;
 	sign->y = (start->y < end->y) ? 1 : -1;
@@ -43,10 +42,11 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 	cur = start;
 	while ((cur.x != end.x || cur.y != end.y) && is_into_screen(fdfs, cur.x, cur.y))
 	{
+
 		if (fdfs->state.one_color)
 		{
-			if (fdfs->state.dark_zero && (end.z - start.z < 1))
-				mlx_put_pixel(fdfs->img, cur.x, cur.y, 0x000000FF);
+			if (fdfs->state.dark_zero && (end.z - start.z < 5))
+				mlx_put_pixel(fdfs->img, cur.x, cur.y, 0xFF0000FF);
 			else
 				mlx_put_pixel(fdfs->img, cur.x, cur.y, fdfs->state.one_color);
 		}
@@ -107,10 +107,9 @@ void	render_map(void *param)
 	int	x;
 	int	y;
 
-	clock_t	t;
-
-	t = clock();
-
+	t_point	p1;
+	t_point	p2;
+	clock_t	t = clock();
 
 	if (!fdfs->state.disable_clean && fdfs->state.bg_color)
 		set_bgcolor(fdfs->img, fdfs->state.bg_color);
@@ -126,14 +125,15 @@ void	render_map(void *param)
 			x = -1;
 			while (++x < fdfs->map->width)
 			{
+				p1 = set_changes(fdfs, new_point(x, y, fdfs));
 				if (x < fdfs->map->width - 1)
-					bresenham(fdfs,
-						set_changes(fdfs, new_point(x, y, fdfs)),
-						set_changes(fdfs, new_point(x + 1, y, fdfs)));
+					p2 = set_changes(fdfs, new_point(x + 1, y, fdfs));
+				if (!fdfs->state.desplace)
+					bresenham(fdfs, p1, p2);
 				if (y < fdfs->map->height - 1)
-					bresenham(fdfs,
-						set_changes(fdfs, new_point(x, y, fdfs)),
-						set_changes(fdfs, new_point(x, y + 1, fdfs)));
+					p2 = set_changes(fdfs, new_point(x, y + 1, fdfs));
+				if (!fdfs->state.desplace)
+					bresenham(fdfs, p1, p2);
 			}
 		}
 
@@ -149,15 +149,15 @@ void	render_map(void *param)
 				{
 					if (fdfs->map->z_gen[y][x] < 5)
 						continue ;
-
+					p1 = set_changes(fdfs, new_point(x, y, fdfs));
 					if (x < fdfs->map->width - 1)
-						bresenham(fdfs,
-							set_changes(fdfs, new_point(x, y, fdfs)),
-							set_changes(fdfs, new_point(x + 1, y, fdfs)));
+						p2 = set_changes(fdfs, new_point(x + 1, y, fdfs));
+					if (!fdfs->state.desplace)
+						bresenham(fdfs, p1, p2);
 					if (y < fdfs->map->height - 1)
-						bresenham(fdfs,
-							set_changes(fdfs, new_point(x, y, fdfs)),
-							set_changes(fdfs, new_point(x, y + 1, fdfs)));
+						p2 = set_changes(fdfs, new_point(x, y + 1, fdfs));
+					if (!fdfs->state.desplace)
+						bresenham(fdfs, p1, p2);
 				}
 			}
 		}
