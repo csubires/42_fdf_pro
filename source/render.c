@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/06 13:14:34 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/09 11:00:59 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 		if (fdfs->state.one_color)
 		{
 			if (fdfs->state.dark_zero && (end.z - start.z < 5))
-				mlx_put_pixel(fdfs->img, cur.x, cur.y, 0xFF0000FF);
+				mlx_put_pixel(fdfs->img, cur.x, cur.y, 0xFFFF00FF);
 			else
 				mlx_put_pixel(fdfs->img, cur.x, cur.y, fdfs->state.one_color);
 		}

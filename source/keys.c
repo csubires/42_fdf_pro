@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/06 13:54:54 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:40:37 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void key_hook(mlx_key_data_t keydata, void* param)
 	t_fdfs	*fdfs = (t_fdfs *)param;
 	is_key_down = 0;
 
+
 	if (keydata.key == MLX_KEY_SPACE && keydata.action == MLX_RELEASE)
 	{
 		is_key_down = 1;
@@ -96,16 +97,44 @@ void key_hook(mlx_key_data_t keydata, void* param)
 	if (keydata.key == MLX_KEY_ENTER && keydata.action == MLX_RELEASE)
 	{
 		is_key_down = 1;
-		if (fdfs->state.menu)
+		if (!fdfs->state.menu)
 		{
-			fdfs->state.menu = 0;
+			fdfs->state.menu = 1;
 			fdfs->menu->enabled = false;
+			render_menu(fdfs);
 		}
 		else
 		{
-			fdfs->state.menu = 1;
+			mlx_delete_image(fdfs->mlx, fdfs->menu);
+			fdfs->state.menu = 0;
 			fdfs->menu->enabled = true;
+			if (mlx_image_to_window(fdfs->mlx, fdfs->img, 0, 0) < 0)
+				error_and_exit("initialise_mlx", "mlx_image_to_window");
 		}
+	}
+
+	if (keydata.key == MLX_KEY_P && keydata.action == MLX_RELEASE)
+	{
+		is_key_down = 0;
+		fdfs->state.clon = !fdfs->state.clon;
+	}
+	if (fdfs->state.clon)
+	{
+		fdfs->rotate_x += ROT_STEP;
+		render_map(fdfs);
+		fdfs->rotate_x -= ROT_STEP;
+		render_map(fdfs);
+	}
+
+	if (keydata.key == MLX_KEY_O && keydata.action == MLX_RELEASE)
+	{
+		is_key_down = 0;
+		fdfs->state.live = !fdfs->state.live;
+	}
+	if (fdfs->state.live)
+	{
+		fdfs->step_y += 100;
+		render_map(fdfs);
 	}
 
 	if (keydata.key == MLX_KEY_J && keydata.action == MLX_RELEASE)
@@ -113,9 +142,13 @@ void key_hook(mlx_key_data_t keydata, void* param)
 		is_key_down = 1;
 		fdfs->state.rnd_color = !fdfs->state.rnd_color;
 		if (fdfs->state.rnd_color)
+		{
 			set_palette(&fdfs->state.palette, 0);
+		}
 		else
+		{
 			set_palette(&fdfs->state.palette, 1);
+		}
 	}
 
 	if (keydata.key == MLX_KEY_M && keydata.action == MLX_RELEASE)
@@ -123,9 +156,13 @@ void key_hook(mlx_key_data_t keydata, void* param)
 		is_key_down = 1;
 		fdfs->state.map_color = !fdfs->state.map_color;
 		if (fdfs->state.map_color)
+		{
 			set_palette(&fdfs->state.palette, 2);
+		}
 		else
+		{
 			set_palette(&fdfs->state.palette, 1);
+		}
 	}
 
 	if (keydata.key == MLX_KEY_0 && keydata.action == MLX_RELEASE)
@@ -175,9 +212,13 @@ void key_hook(mlx_key_data_t keydata, void* param)
 	{
 		is_key_down = 1;
 		if (!fdfs->state.mirror)
+		{
 			fdfs->state.mirror = 1;
+		}
 		else
+		{
 			fdfs->state.mirror = 0;
+		}
 	}
 
 	if (keydata.key == MLX_KEY_6 && keydata.action == MLX_RELEASE)
@@ -193,7 +234,6 @@ void key_hook(mlx_key_data_t keydata, void* param)
 			fdfs->state.rnd_color = 1;
 			set_palette(&fdfs->state.palette, 1);
 		}
-
 	}
 
 	if (keydata.key == MLX_KEY_KP_0 && keydata.action == MLX_RELEASE)

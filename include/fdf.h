@@ -30,34 +30,29 @@
 
 # define M_PI           3.14159265358979323846
 
-void mapToSphere(t_fdfs *fdfs, int **z, int n, int m);
 
-void	mouse_scroll(double xdelta, double ydelta, void* param);
-void mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void* param);
-void	move(void *param);
-void	rotation(void *param);
 
-void key_hook(mlx_key_data_t keydata, void* param);
 // COLOR.C
 int		get_color(t_point start, t_point end, t_point current, t_point delta);
 int		gen_gradient(t_fdfs *fdfs, int cur_z);
 void	set_bgcolor(mlx_image_t *img, int color);
 
 // COLOR_UTILS.C
+int		get_rgba(int r, int g, int b, int a);
+int		get_r(int rgba);
+int		get_g(int rgba);
+int		get_b(int rgba);
+int		get_a(int rgba);
 
-int get_rgba(int r, int g, int b, int a);
-int get_r(int rgba);
-int get_g(int rgba);
-int get_b(int rgba);
-int get_a(int rgba);
-
-
-int	random_color(void);
+int		random_color(void);
 void	set_palette(t_palette *palette, int pal);
 
 // KEYS.C
-
-
+void	mouse_scroll(double xdelta, double ydelta, void* param);
+void	mouse_hook(mouse_key_t button, action_t action, modifier_key_t mods, void* param);
+void	move(void *param);
+void	rotation(void *param);
+void	key_hook(mlx_key_data_t keydata, void* param);
 
 // MAIN.C
 

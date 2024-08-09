@@ -534,3 +534,7 @@ valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./fdf_bonus
 - [Herramienta de color](https://www.rgbtohex.net/)
 
 [$${\color{red}VOLVER}$$](../../README.md)
+
+
+
+---

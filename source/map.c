@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/07/30 12:53:40 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/09 10:42:52 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,20 +83,23 @@ void	create_struct_mem(t_map *map)
 static int	get_width(t_map *map, char *line)
 {
 	int		width;
-	char	**split;
+	char	*split;
 
 	if (!line)
 		return (0);
-	split = ft_split(line, ' ');
+	split = strtok(line, " ");
 	if (!split)
 	{
 		free_map(map);
 		error_and_exit("get_width", "split = ft_split");
 	}
 	width = 0;
-	while (split[width])
+	while (split)
+	{
 		width++;
-	ft_free_split(split);
+		split = strtok(0, " ");
+	}
+	//ft_free_split(split);
 	return (width);
 }
 

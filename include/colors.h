@@ -37,8 +37,8 @@
 # define COLOR_MP_2 0X004DE6FF
 # define COLOR_MP_1 0X000080FF
 // OTHERS
-# define MENU_BR	0x5D6D7E50
-# define MENU_BG	0x34495E50
+# define MENU_BR	0xA69E9CFF
+# define MENU_BG	0x34495E90
 #endif
 
 #ifndef M_TEXT

@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/06 14:30:15 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:35:36 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,11 @@
 
 static void	initialise_mlx(t_fdfs *fdfs)
 {
+	int width;
+	int height;
+
 	mlx_set_setting(MLX_MAXIMIZED, MAXIMIZED);
 	mlx_set_setting(MLX_DECORATED, DECORATED);
-
-
 
 	if (!(fdfs->mlx = mlx_init(WIN_W, WIN_H, "FDF PRO - CSUBIRES", true)))
 		error_and_exit("initialise_mlx", "mlx_init");
@@ -25,30 +26,16 @@ static void	initialise_mlx(t_fdfs *fdfs)
 	if (!(fdfs->img = mlx_new_image(fdfs->mlx, WIN_W, WIN_H)))
 		error_and_exit("initialise_mlx", "mlx_image_t");
 
-	if (!(fdfs->menu = mlx_new_image(fdfs->mlx, MENU_W, MENU_H)))
-		error_and_exit("initialise_mlx", "mlx_image_t");
-
 	if (mlx_image_to_window(fdfs->mlx, fdfs->img, 0, 0) < 0)
 		error_and_exit("initialise_mlx", "mlx_image_to_window");
 	reset_fdfs(fdfs);
-	render_menu(fdfs);
 	render_map(fdfs);
 
-	// ICON
-	mlx_texture_t* image = mlx_load_png("./docs/icon.png");
-	mlx_set_icon(fdfs->mlx, image);
+	mlx_texture_t* icon = mlx_load_png("./docs/icon.png");
+	mlx_set_icon(fdfs->mlx, icon);
 
-	if (mlx_image_to_window(fdfs->mlx, fdfs->menu, (WIN_W - MENU_W) / 2, (WIN_H - MENU_H) / 2) < 0)
-			error_and_exit("initialise_mlx", "mlx_image_to_window");
-
-	int width;
-	int height;
 	mlx_get_monitor_size(0, &width, &height);
 	mlx_set_window_pos(fdfs->mlx, (width - WIN_W)/2, (height - WIN_H)/2);
-
-
-
-
 }
 
 void mlx_resize(int32_t width, int32_t height, void* param)
@@ -64,9 +51,6 @@ int	main(int argc, char *argv[])
 {
 	t_map	*map;
 	t_fdfs	*fdfs;
-
-
-
 
 	map = 0;
 	srand(time(0));

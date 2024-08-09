@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/06 12:44:07 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:37:45 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,7 @@
 
 static double	interpolate(int start, int end, int current)
 {
-	int	len_line;
-
-	len_line = end - start;
+	int	len_line = end - start;
 	if (!len_line)
 		return (1.0);
 	return ((double)(current - start) / len_line);
@@ -35,7 +33,6 @@ int	get_color(t_point start, t_point end, t_point current, t_point diff)
 		t = interpolate(start.x, end.x, current.x);
 	else
 		t = interpolate(start.y, end.y, current.y);
-
 	r = (int)(((1 - t) * get_r(start.color) + t * get_r(end.color)));
 	g = (int)(((1 - t) * get_g(start.color) + t * get_g(end.color)));
 	b = (int)(((1 - t) * get_b(start.color) + t * get_b(end.color)));
@@ -46,11 +43,11 @@ int	gen_gradient(t_fdfs *fdfs, int cur_z)
 {
 	double	gradient = interpolate(fdfs->map->min_z, fdfs->map->max_z, cur_z);
 
-	if (!(fdfs->state.rnd_color) && !(fdfs->state.map_color))
-	{
+	if (fdfs->state.dark_zero && (cur_z < 1 && cur_z > 0 ))
+		return (0xFF00F0FF);
 
-		set_palette(&fdfs->state.palette, 0xFF0000FF);
-	}
+	if (fdfs->state.dark_zero && cur_z == 0)
+		return (fdfs->state.bg_color);
 
 	if (gradient < 0.15)
 		return (fdfs->state.palette.color_1);
@@ -74,6 +71,7 @@ void	set_bgcolor(mlx_image_t *img, int color)
 {
 	uint32_t y = -1;
 	uint32_t x = -1;
+
 	while (++y < img->height)
 	{
 		x = -1;
@@ -84,7 +82,7 @@ void	set_bgcolor(mlx_image_t *img, int color)
 
 int get_rgba(int r, int g, int b, int a)
 {
-    return (r << 24 | g << 16 | b << 8 | a);
+	return (r << 24 | g << 16 | b << 8 | a);
 }
 
 int get_r(int rgba)
@@ -160,16 +158,39 @@ static void	set_palette_one(t_palette *palette, int color)
 	palette->color_8 = color;
 }
 
+static void	set_palette_zero(t_palette *palette, int color)
+{
+	palette->color_1 = color;
+	palette->color_2 = color;
+	palette->color_3 = color;
+	palette->color_4 = color;
+	palette->color_5 = color;
+	palette->color_6 = color;
+	palette->color_7 = color;
+	palette->color_8 = color;
+}
+
+
 void	set_palette(t_palette *palette, int pal)
 {
-	if (pal == 0)
+	switch (pal)
+	{
+	case (0):
 		set_palette_rdm(palette);
-	if (pal == 1)
+		break;
+	case (1):
 		set_palete_default(palette);
-	if (pal == 2)
+		break;
+	case (2):
 		set_palette_map(palette);
-	if (pal == 3)
+		break;
+	case (3):
 		set_palette_one(palette, random_color());
-	if (pal == 4)
-		set_palette_one(palette, 0xFF0000FF);
+		break;
+	case (4):
+		set_palette_zero(palette, 0xFF0000FF);
+		break;
+	default:
+		break;
+	}
 }

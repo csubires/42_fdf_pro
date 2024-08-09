@@ -41,7 +41,6 @@ typedef struct s_palette
 // OPTIONS OF PROGRAM
 typedef struct s_state
 {
-
 	int			zenith;
 	int			menu;
 	int			disable_clean;
@@ -49,6 +48,10 @@ typedef struct s_state
 	int			extra_pixel;
 	int			dark_zero;
 	int			desplace;
+
+	int			live;
+	int			clon;
+
 	int			mirror;
 	int			mod_00;
 	int			mod_01;
@@ -60,7 +63,6 @@ typedef struct s_state
 	int			rnd_color;
 	int			map_color;
 	int			multi_color;
-
 
 	t_palette	palette;
 }	t_state;
@@ -90,7 +92,5 @@ typedef struct s_fdfs
 	float		zoom;
 	float		flat;
 }	t_fdfs;
-
-
 
 #endif

@@ -6,7 +6,7 @@
 #    By: csubires <csubires@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/18 13:48:18 by csubires          #+#    #+#              #
-#    Updated: 2024/08/02 17:24:34 by csubires         ###   ########.fr        #
+#    Updated: 2024/08/09 12:51:18 by csubires         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -75,14 +75,14 @@ clean:
 	clear
 	@$(PRINT) "$(RED)REMOVED!: OBJECTS$(ENDC)"
 	@make -C "lib/libft" clean
-	@make -C "lib/MLX42" clean
-	@make -C "lib/glfw" clean
+#@make -C "lib/MLX42" clean
+#@make -C "lib/glfw" clean
 	@rm -fr $(O_DIR) *.o 2>/dev/null ; true
 
 fclean: clean
 	@$(PRINT) "$(RED), LIBRARY, EXECUTABLE$(ENDC)"
 	@make -C "lib/libft" fclean
-	@rm -rf $(NAME) $(NAME) 2>/dev/null ; true
+	@rm -rf $(NAME) 2>/dev/null ; true
 
 re:	fclean all
 

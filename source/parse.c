@@ -6,12 +6,11 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/02 19:56:46 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/09 13:26:46 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
-
 
 static int	parse_color(t_map *map, char *s)
 {
