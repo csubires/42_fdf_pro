@@ -80,7 +80,8 @@
 		"fdf.h": "c",
 		"config_bonus.h": "c",
 		"cmath": "c",
-		"mlx42.h": "c"
+		"mlx42.h": "c",
+		"stdlib.h": "c"
 	},
 
 }

@@ -6,7 +6,7 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/09 13:37:45 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/26 16:20:54 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,59 @@ int	gen_gradient(t_fdfs *fdfs, int cur_z)
 	else
 		return (fdfs->state.palette.color_8);
 }
+
+int psychedelic_color(int x, int y) {
+    double r = 0.5 + 0.5 * sin(0.1 * x + 0.1 * y);
+    double g = 0.5 + 0.5 * sin(0.1 * x + 0.2 * y);
+    double b = 0.5 + 0.5 * sin(0.1 * x + 0.3 * y);
+
+    int red = (int)(r * 255);
+    int green = (int)(g * 255);
+    int blue = (int)(b * 255);
+
+    return get_rgba(red, green, blue, 255);
+}
+
+
+void draw_kaleidoscope(mlx_image_t *img)
+{
+    int cx = WIN_W / 2;
+    int cy = WIN_H / 2;
+    double angle_step = 2 * M_PI / rand() + 20;  // Ángulo para cada segmento
+
+    for (int y = -cy; y < cy; y++) {
+        for (int x = -cx; x < cx; x++) {
+            // Calculamos el ángulo y la distancia desde el centro
+            double angle = atan2(y, x);
+            double distance = sqrt(x * x + y * y);
+
+            // Normalizar el ángulo al primer segmento (0 a angle_step)
+            if (angle < 0) {
+                angle += 2 * M_PI;
+            }
+            angle = fmod(angle, angle_step);
+
+            // Determinar la nueva posición x' y' usando el ángulo normalizado y la distancia
+            int x_prime = (int)(distance * cos(angle));
+            int y_prime = (int)(distance * sin(angle));
+
+            // Ajustar las coordenadas al centro de la imagen
+            int draw_x = cx + x_prime;
+            int draw_y = cy + y_prime;
+
+            // Generar un color psicodélico basado en las coordenadas
+            int color = psychedelic_color(draw_x, draw_y);
+
+            // Dibujar el pixel en la imagen
+			if (is_into_screen(img, draw_x, draw_y))
+            	mlx_put_pixel(img, draw_x, draw_y, color);
+        }
+    }
+}
+
+
+
+
 
 void	set_bgcolor(mlx_image_t *img, int color)
 {

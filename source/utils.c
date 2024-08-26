@@ -6,11 +6,25 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/09 13:26:07 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/26 16:37:57 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
+
+#include <math.h>
+#include <stdbool.h>
+
+#include <stdlib.h>
+#include <time.h>
+
+#define WIDTH 1920
+#define HEIGHT 1080
+#define ALIVE_COLOR 0xFFFFFF  // Color blanco para las células vivas
+#define DEAD_COLOR 0x000000   // Color negro para las células muertas
+
+#define Z_CAMERA 1000 // Posición del observador en el eje Z
+
 
 void	error_and_exit(const char *func, const char *msg)
 {
@@ -114,6 +128,7 @@ void	sphere(t_fdfs *fdfs, int *x, int *y, int *z)
 	*y += WIN_H / 2;
 }
 
+/*
 void	cilindro(t_fdfs *fdfs, int *x, int *y, int *z)
 {
 	(void)z;
@@ -127,6 +142,36 @@ void	cilindro(t_fdfs *fdfs, int *x, int *y, int *z)
 	*x += WIN_W / 2;
 	*y += WIN_H / 2;
 }
+*/
+
+bool es_visible(int x, int y, int z)
+{
+	(void)y;
+    // Calcular la distancia desde el observador al punto en el cilindro
+    double dist_x = x - WIN_W / 2;
+    double dist_z = Z_CAMERA - z;
+    double angulo = atan2(dist_x, dist_z);  // Ángulo del punto desde el observador
+
+    // El cilindro visible estará entre -PI/2 y PI/2
+    return (angulo > -M_PI / 2 && angulo < M_PI / 2);
+}
+
+void cilindro(t_fdfs *fdfs, int *x, int *y, int *z)
+{
+    double theta = (*x / (double)(fdfs->map->width - 1)) * 2 * M_PI; // Escalar x para obtener el ángulo alrededor del cilindro
+    double r = RADIX;  // Usar un radio fijo para el cilindro
+
+    // Convertir coordenadas cartesianas a coordenadas cilíndricas
+   // int tempX = *x; // Guardamos x temporalmente si necesitamos su valor original para cálculos adicionales
+    *x = (int)(r * cos(theta)); // Calculamos la posición x en el cilindro
+    *z = (int)(r * sin(theta)); // Calculamos la posición z en el cilindro
+
+    // Ajustar la posición y al centro de la ventana
+    *x += WIN_W / 2;
+    *y = *y; // `y` permanece igual ya que no estamos cambiando su valor
+    *z += WIN_H / 2; // Dependiendo del marco de referencia, ajustar z podría ser necesario
+}
+
 
 void	mode_strange01(t_fdfs *fdfs, int *x, int *y, int *z)
 {
@@ -178,7 +223,6 @@ void	reset_fdfs(t_fdfs *fdfs)
 	fdfs->rotate_y = 0;
 	fdfs->rotate_z = 0;
 	fdfs->state.menu = 0;
-	fdfs->menu->enabled = false;
 	fdfs->state.zenith = 1;
 	fdfs->state.bg_color = 0x000000FF;
 	fdfs->state.dark_zero = 0;
@@ -200,4 +244,94 @@ void	reset_fdfs(t_fdfs *fdfs)
 	fdfs->state.mod_03 = 0;
 	fdfs->state.mod_04 = 0;
 	set_palette(&fdfs->state.palette, 1);
+}
+
+
+
+
+// ------------------------------------------------
+
+
+// Inicializa la cuadrícula con células vivas y muertas aleatoriamente
+void initialize_grid(int grid[WIDTH][HEIGHT]) {
+    for (int y = 1; y < HEIGHT; y++) {
+        for (int x = 1; x < WIDTH; x++) {
+            grid[x][y] = rand() % 2;  // 0 para muerto, 1 para vivo
+        }
+    }
+}
+
+// Cuenta los vecinos vivos alrededor de la celda en la posición (x, y)
+int count_alive_neighbors(int grid[WIDTH][HEIGHT], int x, int y) {
+    int count = 0;
+    for (int dy = -1; dy <= 1; dy++) {
+        for (int dx = -1; dx <= 1; dx++) {
+            if (dx == 0 && dy == 0) continue;  // No contarse a sí mismo
+            int nx = x + dx;
+            int ny = y + dy;
+            if (nx >= 0 && nx < WIDTH && ny >= 0 && ny < HEIGHT) {
+                count += grid[nx][ny];
+            }
+        }
+    }
+    return count;
+}
+
+// Calcula la siguiente generación del Juego de la Vida
+void next_generation(int current[WIDTH][HEIGHT], int next[WIDTH][HEIGHT]) {
+    for (int y = 1; y < HEIGHT; y++) {
+        for (int x = 1; x < WIDTH; x++) {
+            int alive_neighbors = count_alive_neighbors(current, x, y);
+            if (current[x][y] == 1) {  // La celda está viva
+                if (alive_neighbors < 2 || alive_neighbors > 3) {
+                    next[x][y] = 0;  // Muere por soledad o sobrepoblación
+                } else {
+                    next[x][y] = 1;  // Sobrevive
+                }
+            } else {  // La celda está muerta
+                if (alive_neighbors == 3) {
+                    next[x][y] = 1;  // Nace una nueva celda
+                } else {
+                    next[x][y] = 0;  // Permanece muerta
+                }
+            }
+        }
+    }
+}
+
+// Dibuja la cuadrícula en la imagen usando mlx_put_pixel
+void draw_grid(mlx_image_t *img, int grid[WIDTH][HEIGHT]) {
+    for (int y = 1; y < HEIGHT; y++) {
+        for (int x = 1; x < WIDTH; x++) {
+            int color = (grid[x][y] == 1) ? ALIVE_COLOR : DEAD_COLOR;
+			if (is_into_screen(img, x, y))
+            	mlx_put_pixel(img, x, y, color);
+        }
+    }
+}
+
+// Función principal para ejecutar el Juego de la Vida
+void game_of_life(mlx_image_t *img)
+{
+    int current[WIDTH][HEIGHT];
+    int next[WIDTH][HEIGHT];
+
+    srand(time(NULL));  // Inicializa la semilla aleatoria
+    initialize_grid(current);  // Inicializa la cuadrícula
+
+    while (1) {  // Bucle infinito para generar generaciones continuamente
+        draw_grid(img, current);  // Dibuja la cuadrícula actual
+        next_generation(current, next);  // Calcula la siguiente generación
+
+        // Copia la siguiente generación a la generación actual
+        for (int y = 1; y < HEIGHT; y++) {
+            for (int x = 1; x < WIDTH; x++) {
+                current[x][y] = next[x][y];
+            }
+        }
+
+		sleep(1);
+        // Aquí puedes agregar un retraso para ver la animación en tiempo real
+        // Por ejemplo, usando usleep(100000) para 0.1 segundos de retraso
+    }
 }

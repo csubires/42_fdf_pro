@@ -36,6 +36,7 @@
 int		get_color(t_point start, t_point end, t_point current, t_point delta);
 int		gen_gradient(t_fdfs *fdfs, int cur_z);
 void	set_bgcolor(mlx_image_t *img, int color);
+void draw_kaleidoscope(mlx_image_t *img);
 
 // COLOR_UTILS.C
 int		get_rgba(int r, int g, int b, int a);
@@ -70,6 +71,7 @@ void	render_menu(t_fdfs *fdfs);
 void	render_map(void *param);
 
 // RENDER_UTILS.C
+int	is_into_screen(mlx_image_t *img, int x, int y);
 void	error_and_exit(const char *err, const char *msg);
 void	rotate_x(t_fdfs *fdfs, int *y, int *z);
 void	rotate_y(t_fdfs *fdfs, int *x, int *z);
@@ -80,9 +82,10 @@ void	rotate_z(t_fdfs *fdfs, int *x, int *y);
 void	free_all(t_fdfs *fdfs);
 void	isometric(t_fdfs *fdfs, int *x, int *y, int z);
 t_point	new_point(int x, int y, t_fdfs *fdfs);
+bool es_visible(int x, int y, int z);
 t_point	set_changes(t_fdfs *fdfs, t_point point);
 void	reset_fdfs(t_fdfs *fdfs);
-
+void game_of_life(mlx_image_t *img);
 
 void	ft_hook(void *param);
 

@@ -6,17 +6,17 @@
 /*   By: csubires <csubires@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/03 09:06:43 by csubires          #+#    #+#             */
-/*   Updated: 2024/08/09 11:00:59 by csubires         ###   ########.fr       */
+/*   Updated: 2024/08/26 15:50:57 by csubires         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
 
-static int	is_into_screen(t_fdfs *fdfs, int x, int y)
+int	is_into_screen(mlx_image_t *img, int x, int y)
 {
 	return (x > 0 && y > 0
-		&& x < (int)fdfs->img->width
-		&& y < (int)fdfs->img->height
+		&& x < (int)img->width
+		&& y < (int)img->height
 	);
 }
 
@@ -40,9 +40,8 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 	init_bresenham(&start, &end, &diff, &sign);
 	line = diff.x - diff.y;
 	cur = start;
-	while ((cur.x != end.x || cur.y != end.y) && is_into_screen(fdfs, cur.x, cur.y))
+	while ((cur.x != end.x || cur.y != end.y) && is_into_screen(fdfs->img, cur.x, cur.y))
 	{
-
 		if (fdfs->state.one_color)
 		{
 			if (fdfs->state.dark_zero && (end.z - start.z < 5))
@@ -59,13 +58,13 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 			tmp1 = 0;
 			while (tmp1++ < LINE_SIZE)
 			{
-				if (is_into_screen(fdfs, cur.x+tmp1, cur.y+tmp1))
+				if (is_into_screen(fdfs->img, cur.x+tmp1, cur.y+tmp1))
 					mlx_put_pixel(fdfs->img, cur.x+tmp1, cur.y+tmp1, color);
-				if (is_into_screen(fdfs, cur.x-tmp1, cur.y-tmp1))
+				if (is_into_screen(fdfs->img, cur.x-tmp1, cur.y-tmp1))
 					mlx_put_pixel(fdfs->img, cur.x-tmp1, cur.y-tmp1, color);
-				if (is_into_screen(fdfs, cur.x+tmp1, cur.y-tmp1))
+				if (is_into_screen(fdfs->img, cur.x+tmp1, cur.y-tmp1))
 					mlx_put_pixel(fdfs->img, cur.x+tmp1, cur.y-tmp1, color);
-				if (is_into_screen(fdfs, cur.x-tmp1, cur.y+tmp1))
+				if (is_into_screen(fdfs->img, cur.x-tmp1, cur.y+tmp1))
 					mlx_put_pixel(fdfs->img, cur.x-tmp1, cur.y+tmp1, color);
 			}
 		}
@@ -76,13 +75,13 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 			tmp1 = 0;
 			while (tmp1++ < LINE_SIZE)
 			{
-				if (is_into_screen(fdfs, cur.x+tmp1, cur.y+tmp1))
+				if (is_into_screen(fdfs->img, cur.x+tmp1, cur.y+tmp1))
 					mlx_put_pixel(fdfs->img, cur.x+tmp1, cur.y+tmp1, get_color(start, end, cur, diff));
-				if (is_into_screen(fdfs, cur.x-tmp1, cur.y-tmp1))
+				if (is_into_screen(fdfs->img, cur.x-tmp1, cur.y-tmp1))
 					mlx_put_pixel(fdfs->img, cur.x-tmp1, cur.y-tmp1, get_color(start, end, cur, diff));
-				if (is_into_screen(fdfs, cur.x+tmp1, cur.y-tmp1))
+				if (is_into_screen(fdfs->img, cur.x+tmp1, cur.y-tmp1))
 					mlx_put_pixel(fdfs->img, cur.x+tmp1, cur.y-tmp1, get_color(start, end, cur, diff));
-				if (is_into_screen(fdfs, cur.x-tmp1, cur.y+tmp1))
+				if (is_into_screen(fdfs->img, cur.x-tmp1, cur.y+tmp1))
 					mlx_put_pixel(fdfs->img, cur.x-tmp1, cur.y+tmp1, get_color(start, end, cur, diff));
 			}
 		}
@@ -100,6 +99,8 @@ static void	bresenham(t_fdfs *fdfs, t_point start, t_point end)
 		}
 	}
 }
+
+
 
 void	render_map(void *param)
 {
@@ -125,6 +126,10 @@ void	render_map(void *param)
 			x = -1;
 			while (++x < fdfs->map->width)
 			{
+
+				if (fdfs->state.mod_01 == 1 && !es_visible(x, y, fdfs->map->z_gen[y][x]))
+					continue ;
+
 				p1 = set_changes(fdfs, new_point(x, y, fdfs));
 				if (x < fdfs->map->width - 1)
 					p2 = set_changes(fdfs, new_point(x + 1, y, fdfs));
